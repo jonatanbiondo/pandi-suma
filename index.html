@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pandi y los números</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: una pantalla, una sola tarea por vez; número gigante + marco de diez, botones que ocupan media pantalla. */
+:root {
+  --bg: #0A0F2C;        /* noche azul profundo */
+  --surface: #19225A;   /* botones */
+  --line: #FFFFFF;      /* bordes gruesos */
+  --fg: #FFFFFF;
+  --num: #FFD400;       /* números y objetos: amarillo sobre azul, contraste máximo */
+  --empty: #2C377A;     /* casillas vacías del marco */
+  --ok: #2EE59D;
+  --soft: #B9C0EA;
+  --font: "Atkinson Hyperlegible", "Verdana", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html[data-colors="light"] {
+  --bg: #FFFFFF; --surface: #FFF2B3; --line: #000000; --fg: #000000;
+  --num: #000000; --empty: #E3E5EF; --ok: #08803F; --soft: #3A3F5C;
+  color-scheme: light;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  touch-action: manipulation; overflow: hidden;
+}
+#app {
+  height: 100%; box-sizing: border-box;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+}
+.screen { height: 100%; display: flex; flex-direction: column; gap: 12px; }
+button {
+  font-family: var(--font); color: var(--fg); background: var(--surface);
+  border: 6px solid var(--line); border-radius: 28px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus-visible { outline: 8px solid var(--num); outline-offset: 4px; }
+svg { display: block; }
+
+/* Barra superior */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: 0 0 auto; }
+.icon-btn { width: 96px; height: 96px; display: grid; place-items: center; padding: 0; border-radius: 50%; }
+.icon-btn svg { width: 52px; height: 52px; }
+.stars { display: flex; align-items: center; gap: 10px; font-size: 56px; font-weight: 700; color: var(--num); font-variant-numeric: tabular-nums; }
+.stars svg { width: 60px; height: 60px; }
+
+/* Inicio */
+#home { align-items: center; justify-content: center; text-align: center; position: relative; }
+#home h1 { margin: 0; font-size: clamp(36px, 7vmin, 72px); line-height: 1.05; text-wrap: balance; }
+.panda { width: clamp(110px, 24vmin, 220px); height: auto; }
+.menu { display: flex; gap: 24px; width: 100%; max-width: 1100px; flex: 0 1 46vh; min-height: 180px; }
+.menu button { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: clamp(30px, 5.5vmin, 56px); font-weight: 700; padding: 16px; min-width: 0; }
+.menu .big { font-size: clamp(64px, 14vmin, 150px); line-height: 1; color: var(--num); }
+#btnSettings { position: absolute; top: 0; right: 0; width: 72px; height: 72px; border-width: 4px; }
+#btnSettings svg { width: 38px; height: 38px; }
+
+/* Conocer */
+#learnStage { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1.3fr; align-items: center; gap: 24px; cursor: pointer; }
+.numbox { text-align: center; }
+.bignum { font-size: min(48vh, 30vw); font-weight: 700; line-height: .9; color: var(--num); font-variant-numeric: tabular-nums; }
+.word { font-size: min(11vh, 8vw); font-weight: 700; margin-top: 8px; }
+.frame { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2vmin; padding: 2vmin; border: 6px solid var(--line); border-radius: 24px; }
+.cell { aspect-ratio: 1; border-radius: 50%; background: var(--empty); max-width: 100%; transition: transform .25s, box-shadow .25s; }
+.cell.on { background: var(--num); }
+.cell.lit { transform: scale(1.12); box-shadow: 0 0 0 1.2vmin var(--line); }
+.hint { grid-column: 1 / -1; text-align: center; margin: 0; font-size: clamp(22px, 3.6vmin, 36px); color: var(--soft); }
+@media (orientation: portrait) {
+  #learnStage { grid-template-columns: 1fr; align-content: center; }
+  .bignum { font-size: min(30vh, 55vw); }
+  .word { font-size: min(7vh, 12vw); }
+}
+
+/* Encontrar */
+.prompt { margin: 0; text-align: center; font-size: clamp(30px, 7vmin, 72px); font-weight: 700; flex: 0 0 auto; text-wrap: balance; }
+.prompt b { color: var(--num); }
+.choices { flex: 1 1 auto; min-height: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 24px; }
+.choice { font-size: min(42vh, 26vw); font-weight: 700; line-height: 1; color: var(--num); min-width: 0; min-height: 0; transition: transform .2s, opacity .3s; font-variant-numeric: tabular-nums; }
+.choice.ok { background: var(--ok); border-color: var(--ok); color: var(--bg); transform: scale(1.04); }
+.choice.tried { opacity: .25; }
+.n3 .choice { font-size: min(40vh, 18vw); }
+@media (orientation: portrait) and (max-aspect-ratio: 4/5) {
+  .choices.n3 { grid-auto-flow: row; grid-auto-rows: 1fr; }
+  .n3 .choice { font-size: min(18vh, 40vw); }
+}
+
+/* Celebración */
+.party { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; text-align: center; cursor: pointer; padding: 16px; }
+.party .panda { width: min(40vmin, 320px); animation: hop .7s ease-in-out infinite alternate; }
+.party h2 { margin: 0; font-size: clamp(56px, 13vmin, 140px); color: var(--ok); }
+.party p { margin: 0; font-size: clamp(32px, 7vmin, 80px); font-weight: 700; }
+.party p b { color: var(--num); font-size: 1.4em; }
+.burst { position: absolute; left: 50%; top: 42%; width: 0; height: 0; }
+.burst svg { position: absolute; width: 9vmin; height: 9vmin; margin: -4.5vmin; color: var(--num); animation: fly 1.1s ease-out forwards; }
+@keyframes fly { from { transform: rotate(var(--a)) translateY(0) scale(.4); opacity: 1; } to { transform: rotate(var(--a)) translateY(-38vmin) scale(1); opacity: 0; } }
+@keyframes hop { from { transform: translateY(0); } to { transform: translateY(-4vmin); } }
+@keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.pop { animation: pop .45s ease-out; }
+
+/* Ajustes (para el adulto) */
+#settings { overflow-y: auto; }
+#settings h2 { margin: 0; font-size: 36px; }
+.group { display: flex; flex-direction: column; gap: 10px; }
+.group > span { font-size: 26px; font-weight: 700; }
+.seg { display: flex; gap: 12px; flex-wrap: wrap; }
+.seg button { font-size: 26px; font-weight: 700; padding: 14px 24px; min-width: 140px; border-width: 4px; }
+.seg button[aria-pressed="true"] { background: var(--num); color: var(--bg); border-color: var(--num); }
+.note { font-size: 20px; color: var(--soft); margin: 0; max-width: 65ch; }
+#btnTest { font-size: 26px; font-weight: 700; padding: 14px 24px; border-width: 4px; align-self: flex-start; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .burst { display: none; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5 1.4-7.1-5.3-5 7.2-.9z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5 1.5 11.6l1.6 1.8L5 11.8V21h5.5v-6h3v6H19v-9.2l1.9 1.6 1.6-1.8z"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1l-.4-2.7h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L4.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></symbol>
+    <symbol id="i-panda" viewBox="0 0 200 200">
+      <circle cx="48" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
+      <circle cx="152" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
+      <circle cx="100" cy="110" r="78" fill="#fff" stroke="#111" stroke-width="5"/>
+      <ellipse cx="68" cy="100" rx="19" ry="25" transform="rotate(-25 68 100)" fill="#111"/>
+      <ellipse cx="132" cy="100" rx="19" ry="25" transform="rotate(25 132 100)" fill="#111"/>
+      <circle cx="71" cy="98" r="8" fill="#fff"/><circle cx="129" cy="98" r="8" fill="#fff"/>
+      <circle cx="73" cy="99" r="4" fill="#111"/><circle cx="127" cy="99" r="4" fill="#111"/>
+      <ellipse cx="100" cy="132" rx="13" ry="9" fill="#111"/>
+      <path d="M84 148q16 16 32 0" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="52" cy="138" r="10" fill="#FF8FB1"/><circle cx="148" cy="138" r="10" fill="#FF8FB1"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="app">
+  <section id="home" class="screen">
+    <button id="btnSettings" class="icon-btn" aria-label="Ajustes para adultos"><svg><use href="#i-gear"/></svg></button>
+    <svg class="panda" viewBox="0 0 200 200" aria-hidden="true"><use href="#i-panda"/></svg>
+    <h1>Pandi y los números</h1>
+    <div class="menu">
+      <button id="btnLearn"><span class="big">1 2 3</span><span>Conocer</span></button>
+      <button id="btnFind"><span class="big">?</span><span>Encontrar</span></button>
+    </div>
+  </section>
+
+  <section id="learn" class="screen" hidden>
+    <div class="bar">
+      <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
+    </div>
+    <div id="learnStage" role="button" tabindex="0" aria-label="Siguiente número">
+      <div class="numbox"><div class="bignum" id="learnNum">1</div><div class="word" id="learnWord">uno</div></div>
+      <div class="frame" id="learnFrame"></div>
+      <p class="hint">Toca la pantalla para el siguiente</p>
+    </div>
+  </section>
+
+  <section id="find" class="screen" hidden>
+    <div class="bar">
+      <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span id="starCount">0</span></div>
+      <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
+    </div>
+    <p class="prompt" id="findPrompt" aria-live="polite"></p>
+    <div class="choices" id="choices"></div>
+  </section>
+
+  <section id="settings" class="screen" hidden>
+    <div class="bar">
+      <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <h2>Ajustes</h2>
+      <span style="width:96px"></span>
+    </div>
+    <div class="group"><span>Números</span><div class="seg" data-key="max"><button data-val="5">1 al 5</button><button data-val="10">1 al 10</button></div></div>
+    <div class="group"><span>Respuestas en «Encontrar»</span><div class="seg" data-key="options"><button data-val="2">2</button><button data-val="3">3</button></div></div>
+    <div class="group"><span>Velocidad de la voz</span><div class="seg" data-key="rate"><button data-val="0.75">Lenta</button><button data-val="0.95">Normal</button></div></div>
+    <div class="group"><span>Colores</span><div class="seg" data-key="colors"><button data-val="dark">Amarillo sobre azul</button><button data-val="light">Negro sobre blanco</button></div></div>
+    <div class="group"><span>Voz</span><button id="btnTest">Probar la voz</button><p class="note" id="voiceName"></p></div>
+    <p class="note">Los ajustes se guardan en este navegador. No hay tiempo límite ni puntos que se pierdan: cuando se equivoca, la voz le dice qué número tocó y lo anima a seguir buscando.</p>
+  </section>
+
+  <div id="party" class="party" hidden>
+    <div class="burst" id="burst"></div>
+    <svg class="panda" viewBox="0 0 200 200" aria-hidden="true"><use href="#i-panda"/></svg>
+    <h2 id="partyTitle">¡Muy bien!</h2>
+    <p id="partyText"></p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const W = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez"];
+  const $ = (id) => document.getElementById(id);
+  const DEFAULTS = { max: 10, options: 2, rate: 0.75, colors: "dark" };
+  let S = { ...DEFAULTS };
+  try { Object.assign(S, JSON.parse(localStorage.getItem("pandi-numeros") || "{}")); } catch (e) {}
+  const save = () => { try { localStorage.setItem("pandi-numeros", JSON.stringify(S)); } catch (e) {} };
+  const applyColors = () => document.documentElement.setAttribute("data-colors", S.colors);
+  applyColors();
+
+  /* ---------- Toques: grandes, tolerantes y sin dobles toques ---------- */
+  let lockUntil = 0;
+  const guard = () => { const t = performance.now(); if (t < lockUntil) return false; lockUntil = t + 650; return true; };
+  function onTap(el, fn) {
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button > 0) return;
+      e.preventDefault(); e.stopPropagation();
+      unlockAudio();
+      if (guard()) fn(e);
+    });
+    el.addEventListener("click", (e) => { e.stopPropagation(); if (e.detail === 0 && guard()) { unlockAudio(); fn(e); } });
+    el.addEventListener("keydown", (e) => {
+      if (el.tagName !== "BUTTON" && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); if (guard()) { unlockAudio(); fn(e); } }
+    });
+  }
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  /* ---------- Sonido y voz ---------- */
+  let actx = null;
+  function unlockAudio() {
+    if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (actx && actx.state === "suspended") actx.resume();
+  }
+  function chime() {
+    if (!actx) return;
+    const t0 = actx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      const t = t0 + i * 0.11;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.4);
+    });
+  }
+  const synth = window.speechSynthesis;
+  let voice = null;
+  function pickVoice() {
+    if (!synth) return;
+    const vs = synth.getVoices().filter((v) => /^es/i.test(v.lang));
+    const pref = ["es-AR","es-419","es-US","es-MX","es-ES"];
+    voice = null;
+    for (const p of pref) { voice = vs.find((v) => v.lang.replace("_","-") === p); if (voice) break; }
+    voice = voice || vs[0] || null;
+    $("voiceName").textContent = voice ? "Voz en uso: " + voice.name + " (" + voice.lang + ")" : (synth ? "No encontré una voz en español en este dispositivo. Se usará la voz por defecto." : "Este navegador no puede leer en voz alta.");
+  }
+  if (synth) { pickVoice(); synth.addEventListener?.("voiceschanged", pickVoice); }
+  else pickVoice();
+
+  let sayToken = 0;
+  function say(parts, onPart, onDone) {
+    const tok = ++sayToken;
+    if (synth) synth.cancel();
+    let i = 0;
+    const next = () => {
+      if (tok !== sayToken) return;
+      if (i >= parts.length) { onDone && onDone(); return; }
+      const idx = i++, text = parts[idx];
+      onPart && onPart(idx);
+      if (!synth) { setTimeout(next, 900); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = voice ? voice.lang : "es-ES"; if (voice) u.voice = voice;
+      u.rate = Number(S.rate); u.pitch = 1.1;
+      let done = false;
+      const fin = () => { if (done) return; done = true; clearTimeout(guardT); setTimeout(next, 180); };
+      const guardT = setTimeout(fin, 1800 + text.length * 140);
+      u.onend = fin; u.onerror = fin;
+      synth.speak(u);
+    };
+    setTimeout(next, 80);
+  }
+  const stopVoice = () => { sayToken++; if (synth) synth.cancel(); };
+
+  /* ---------- Pantallas ---------- */
+  let current = "home";
+  function show(name) {
+    stopVoice(); clearTimeout(partyTimer); $("party").hidden = true;
+    for (const s of ["home","learn","find","settings"]) $(s).hidden = s !== name;
+    current = name;
+  }
+  document.querySelectorAll(".js-home").forEach((b) => onTap(b, () => show("home")));
+  document.querySelectorAll(".js-repeat").forEach((b) => onTap(b, () => current === "learn" ? speakLearn() : speakPrompt()));
+
+  /* ---------- Conocer ---------- */
+  let ln = 1;
+  function pop(el) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+  function renderLearn() {
+    $("learnNum").textContent = ln; $("learnWord").textContent = W[ln];
+    pop($("learnNum"));
+    const slots = S.max > 5 ? 10 : 5, f = $("learnFrame");
+    f.innerHTML = "";
+    for (let k = 0; k < slots; k++) { const c = document.createElement("div"); c.className = "cell" + (k < ln ? " on" : ""); f.appendChild(c); }
+    f.setAttribute("aria-label", ln + " círculos amarillos");
+    speakLearn();
+  }
+  function speakLearn() {
+    const cells = $("learnFrame").children;
+    [...cells].forEach((c) => c.classList.remove("lit"));
+    const parts = ["Este es el " + W[ln] + "."];
+    for (let k = 1; k <= ln; k++) parts.push(W[k]);
+    say(parts, (idx) => { if (idx >= 1 && cells[idx - 1]) cells[idx - 1].classList.add("lit"); });
+  }
+  onTap($("learnStage"), () => { ln = ln >= S.max ? 1 : ln + 1; renderLearn(); });
+  onTap($("btnLearn"), () => { ln = 1; show("learn"); renderLearn(); });
+
+  /* ---------- Encontrar ---------- */
+  let target = 0, last = 0, roundDone = false, stars = 0, partyTimer = 0;
+  const rand = (n) => 1 + Math.floor(Math.random() * n);
+  function speakPrompt() { if (target) say(["¿Dónde está el " + W[target] + "?"]); }
+  function newRound() {
+    roundDone = false;
+    do { target = rand(S.max); } while (target === last && S.max > 1);
+    last = target;
+    const opts = new Set([target]);
+    const n = Math.min(Number(S.options), S.max);
+    while (opts.size < n) opts.add(rand(S.max));
+    const list = [...opts].sort(() => Math.random() - 0.5);
+    const box = $("choices");
+    box.className = "choices n" + n; box.innerHTML = "";
+    list.forEach((v) => {
+      const b = document.createElement("button");
+      b.className = "choice"; b.textContent = v; b.setAttribute("aria-label", W[v]);
+      onTap(b, () => answer(v, b));
+      box.appendChild(b);
+    });
+    $("findPrompt").innerHTML = "¿Dónde está el <b>" + W[target] + "</b>?";
+    pop($("findPrompt"));
+    speakPrompt();
+  }
+  function answer(v, b) {
+    if (roundDone || b.classList.contains("tried")) return;
+    if (v === target) {
+      roundDone = true; b.classList.add("ok"); chime();
+      stars++; $("starCount").textContent = stars;
+      setTimeout(showParty, 450);
+    } else {
+      b.classList.add("tried"); b.setAttribute("aria-disabled", "true");
+      say(["Ese es el " + W[v] + ".", "Busca el " + W[target] + "."]);
+    }
+  }
+  function showParty() {
+    if (current !== "find") return;
+    const p = $("party");
+    $("partyTitle").textContent = stars % 5 === 0 ? "¡" + stars + " estrellas!" : "¡Muy bien!";
+    $("partyText").innerHTML = "Es el <b>" + target + "</b>";
+    const burst = $("burst"); burst.innerHTML = "";
+    for (let k = 0; k < 10; k++) burst.insertAdjacentHTML("beforeend", '<svg style="--a:' + (k * 36) + 'deg"><use href="#i-star"/></svg>');
+    p.hidden = false;
+    const parts = ["¡Muy bien!", "Es el " + W[target] + "."];
+    if (stars % 5 === 0) parts[2] ="¡Ya ganaste " + (stars <= 10 ? W[stars] : stars) + " estrellas!";
+    say(parts, null, () => { partyTimer = setTimeout(closeParty, 1400); });
+  }
+  function closeParty() { clearTimeout(partyTimer); if ($("party").hidden) return; $("party").hidden = true; newRound(); }
+  onTap($("party"), closeParty);
+  onTap($("btnFind"), () => { show("find"); newRound(); });
+
+  /* ---------- Ajustes ---------- */
+  function syncSeg() {
+    document.querySelectorAll(".seg").forEach((seg) => {
+      const key = seg.dataset.key;
+      seg.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(String(S[key]) === b.dataset.val)));
+    });
+  }
+  document.querySelectorAll(".seg button").forEach((b) => onTap(b, () => {
+    const key = b.parentElement.dataset.key;
+    S[key] = key === "colors" ? b.dataset.val : Number(b.dataset.val);
+    save(); syncSeg(); applyColors();
+  }));
+  onTap($("btnSettings"), () => { show("settings"); syncSeg(); });
+  onTap($("btnTest"), () => say(["Hola, soy Pandi.", "Uno, dos, tres."]));
+  syncSeg();
+})();
+</script>
+</body>
+</html>
