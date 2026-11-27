@@ -19,12 +19,13 @@
   --empty: #2C377A;     /* casillas vacías del marco */
   --ok: #2EE59D;
   --soft: #B9C0EA;
+  --num2: #5CE1FF;      /* segundo grupo en Sumar: celeste */
   --font: "Atkinson Hyperlegible", "Verdana", "Segoe UI", system-ui, sans-serif;
   color-scheme: dark;
 }
 html[data-colors="light"] {
   --bg: #FFFFFF; --surface: #FFF2B3; --line: #000000; --fg: #000000;
-  --num: #000000; --empty: #E3E5EF; --ok: #08803F; --soft: #3A3F5C;
+  --num: #000000; --empty: #E3E5EF; --ok: #08803F; --soft: #3A3F5C; --num2: #0039B3;
   color-scheme: light;
 }
 [hidden] { display: none !important; }
@@ -60,9 +61,12 @@ svg { display: block; }
 #home { align-items: center; justify-content: center; text-align: center; position: relative; }
 #home h1 { margin: 0; font-size: clamp(36px, 7vmin, 72px); line-height: 1.05; text-wrap: balance; }
 .panda { width: clamp(110px, 24vmin, 220px); height: auto; }
-.menu { display: flex; gap: 24px; width: 100%; max-width: 1100px; flex: 0 1 46vh; min-height: 180px; }
-.menu button { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: clamp(30px, 5.5vmin, 56px); font-weight: 700; padding: 16px; min-width: 0; }
-.menu .big { font-size: clamp(64px, 14vmin, 150px); line-height: 1; color: var(--num); }
+.menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 1300px; flex: 0 1 50vh; min-height: 180px; }
+@media (max-aspect-ratio: 5/4) { .menu { grid-template-columns: repeat(2, 1fr); flex-basis: 56vh; } }
+.menu button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: clamp(30px, 5.5vmin, 56px); font-weight: 700; padding: 16px; min-width: 0; }
+.menu button { font-size: clamp(26px, 4.6vmin, 50px); }
+.menu .big { font-size: clamp(50px, 11vmin, 130px); line-height: 1; color: var(--num); white-space: nowrap; }
+.menu .big svg { height: 1em; width: auto; }
 #btnSettings { position: absolute; top: 0; right: 0; width: 72px; height: 72px; border-width: 4px; }
 #btnSettings svg { width: 38px; height: 38px; }
 
@@ -94,6 +98,31 @@ svg { display: block; }
   .choices.n3 { grid-auto-flow: row; grid-auto-rows: 1fr; }
   .n3 .choice { font-size: min(18vh, 40vw); }
 }
+
+/* Contar y Sumar */
+.stage { flex: 1 1 auto; min-height: 0; display: flex; gap: 2vmin; align-items: stretch; justify-content: center; cursor: pointer; border-radius: 28px; }
+.stage:focus-visible { outline: 8px solid var(--num); outline-offset: 4px; }
+.group-box { flex: 1 1 0; min-width: 0; min-height: 0; display: flex; flex-direction: column; border: 6px solid var(--line); border-radius: 28px; padding: 1.5vmin; }
+.objs { flex: 1 1 auto; min-height: 0; position: relative; }
+.objs svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.gnum { flex: 0 0 auto; text-align: center; font-size: min(10vh, 9vw); font-weight: 700; line-height: 1; padding-top: .5vmin; font-variant-numeric: tabular-nums; }
+.plus { flex: 0 0 auto; align-self: center; font-size: min(16vh, 12vw); font-weight: 700; line-height: 1; }
+.g2 .gnum { color: var(--num2); }
+.g1 .gnum { color: var(--num); }
+@media (orientation: portrait) { #sumStage { flex-direction: column; } #sumStage .plus { font-size: min(9vh, 16vw); } }
+.obj .o-in { transform-box: fill-box; transform-origin: center; transition: transform .2s, opacity .2s; }
+.obj .ring { opacity: 0; transition: opacity .15s; }
+.stage.counting .obj .o-in { opacity: .3; }
+.stage.counting .obj.done .o-in { opacity: 1; }
+.obj.lit .o-in { transform: scale(1.18); opacity: 1; }
+.obj.lit .ring { opacity: 1; }
+.obj .tag { font-family: var(--font); font-weight: 700; font-size: 34px; opacity: 0; }
+.obj.done .tag { opacity: 1; }
+.choices.low { flex: 0 0 30vh; }
+.low .choice { font-size: min(22vh, 20vw); }
+.low.n3 .choice { font-size: min(22vh, 15vw); }
+@media (orientation: portrait) and (max-aspect-ratio: 4/5) { .choices.low.n3 { grid-auto-flow: column; grid-auto-rows: auto; } .low.n3 .choice { font-size: min(18vh, 15vw); } }
+.choice.hint-ok { box-shadow: 0 0 0 10px var(--num); }
 
 /* Celebración */
 .party { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; text-align: center; cursor: pointer; padding: 16px; }
@@ -133,6 +162,10 @@ svg { display: block; }
     <symbol id="i-home" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5 1.5 11.6l1.6 1.8L5 11.8V21h5.5v-6h3v6H19v-9.2l1.9 1.6 1.6-1.8z"/></symbol>
     <symbol id="i-sound" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></symbol>
     <symbol id="i-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1l-.4-2.7h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L4.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></symbol>
+    <symbol id="o-star" viewBox="0 0 100 100"><path fill="currentColor" d="M50 4l13.2 28 30.6 3.8L71.3 57l6 30.2L50 72.4 22.7 87.2l6-30.2L6.2 35.8 36.8 32z"/></symbol>
+    <symbol id="o-ball" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="currentColor"/><path d="M12 40Q50 66 88 40M30 13Q48 50 30 88" fill="none" stroke="var(--bg)" stroke-width="6"/></symbol>
+    <symbol id="o-apple" viewBox="0 0 100 100"><path fill="currentColor" d="M50 32C30 14 6 28 12 56s28 40 38 32c10 8 32-4 38-32S70 14 50 32z"/><path d="M50 32Q50 16 58 6" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path fill="currentColor" d="M55 22q14-16 30-8q-14 16-30 8z"/></symbol>
+    <symbol id="o-flower" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="24" r="20"/><circle cx="75" cy="42" r="20"/><circle cx="66" cy="72" r="20"/><circle cx="34" cy="72" r="20"/><circle cx="25" cy="42" r="20"/></g><circle cx="50" cy="50" r="14" fill="var(--bg)"/></symbol>
     <symbol id="i-panda" viewBox="0 0 200 200">
       <circle cx="48" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
       <circle cx="152" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
@@ -156,6 +189,8 @@ svg { display: block; }
     <div class="menu">
       <button id="btnLearn"><span class="big">1 2 3</span><span>Conocer</span></button>
       <button id="btnFind"><span class="big">?</span><span>Encontrar</span></button>
+      <button id="btnCount"><span class="big"><svg viewBox="0 0 300 100" aria-hidden="true"><use href="#o-star" x="0" width="100" height="100"/><use href="#o-star" x="100" width="100" height="100"/><use href="#o-star" x="200" width="100" height="100"/></svg></span><span>Contar</span></button>
+      <button id="btnSum"><span class="big">1+1</span><span>Sumar</span></button>
     </div>
   </section>
 
@@ -174,11 +209,39 @@ svg { display: block; }
   <section id="find" class="screen" hidden>
     <div class="bar">
       <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
-      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span id="starCount">0</span></div>
+      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
       <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
     </div>
     <p class="prompt" id="findPrompt" aria-live="polite"></p>
     <div class="choices" id="choices"></div>
+  </section>
+
+  <section id="count" class="screen" hidden>
+    <div class="bar">
+      <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
+      <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
+    </div>
+    <p class="prompt" id="countPrompt" aria-live="polite"></p>
+    <div class="stage" id="countStage" role="button" tabindex="0" aria-label="Contar en voz alta">
+      <div class="group-box g1"><div class="objs" id="countObjs"></div></div>
+    </div>
+    <div class="choices low" id="countChoices"></div>
+  </section>
+
+  <section id="sum" class="screen" hidden>
+    <div class="bar">
+      <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
+      <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
+    </div>
+    <p class="prompt" id="sumPrompt" aria-live="polite"></p>
+    <div class="stage" id="sumStage" role="button" tabindex="0" aria-label="Contar todo en voz alta">
+      <div class="group-box g1"><div class="objs" id="sumA"></div><div class="gnum" id="sumANum"></div></div>
+      <div class="plus" aria-hidden="true">+</div>
+      <div class="group-box g2"><div class="objs" id="sumB"></div><div class="gnum" id="sumBNum"></div></div>
+    </div>
+    <div class="choices low" id="sumChoices"></div>
   </section>
 
   <section id="settings" class="screen" hidden>
@@ -188,7 +251,10 @@ svg { display: block; }
       <span style="width:96px"></span>
     </div>
     <div class="group"><span>Números</span><div class="seg" data-key="max"><button data-val="5">1 al 5</button><button data-val="10">1 al 10</button></div></div>
-    <div class="group"><span>Respuestas en «Encontrar»</span><div class="seg" data-key="options"><button data-val="2">2</button><button data-val="3">3</button></div></div>
+    <div class="group"><span>Nivel de «Contar»</span><div class="seg" data-key="lvCount"><button data-val="1">1: hasta 3</button><button data-val="2">2: hasta 5</button><button data-val="3">3: hasta 10</button></div></div>
+    <div class="group"><span>Nivel de «Sumar»</span><div class="seg" data-key="lvSum"><button data-val="1">1: más uno</button><button data-val="2">2: hasta 5</button><button data-val="3">3: hasta 10</button></div></div>
+    <div class="group"><span>Subir de nivel solo (cada 5 aciertos al primer intento)</span><div class="seg" data-key="auto"><button data-val="1">Sí</button><button data-val="0">No</button></div></div>
+    <div class="group"><span>Respuestas para elegir</span><div class="seg" data-key="options"><button data-val="2">2</button><button data-val="3">3</button></div></div>
     <div class="group"><span>Velocidad de la voz</span><div class="seg" data-key="rate"><button data-val="0.75">Lenta</button><button data-val="0.95">Normal</button></div></div>
     <div class="group"><span>Colores</span><div class="seg" data-key="colors"><button data-val="dark">Amarillo sobre azul</button><button data-val="light">Negro sobre blanco</button></div></div>
     <div class="group"><span>Voz</span><button id="btnTest">Probar la voz</button><p class="note" id="voiceName"></p></div>
@@ -207,7 +273,7 @@ svg { display: block; }
 (() => {
   const W = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez"];
   const $ = (id) => document.getElementById(id);
-  const DEFAULTS = { max: 10, options: 2, rate: 0.75, colors: "dark" };
+  const DEFAULTS = { max: 10, options: 2, rate: 0.75, colors: "dark", lvCount: 1, lvSum: 1, auto: 1 };
   let S = { ...DEFAULTS };
   try { Object.assign(S, JSON.parse(localStorage.getItem("pandi-numeros") || "{}")); } catch (e) {}
   const save = () => { try { localStorage.setItem("pandi-numeros", JSON.stringify(S)); } catch (e) {} };
@@ -290,11 +356,16 @@ svg { display: block; }
   let current = "home";
   function show(name) {
     stopVoice(); clearTimeout(partyTimer); $("party").hidden = true;
-    for (const s of ["home","learn","find","settings"]) $(s).hidden = s !== name;
+    for (const s of ["home","learn","find","count","sum","settings"]) $(s).hidden = s !== name;
     current = name;
   }
   document.querySelectorAll(".js-home").forEach((b) => onTap(b, () => show("home")));
-  document.querySelectorAll(".js-repeat").forEach((b) => onTap(b, () => current === "learn" ? speakLearn() : speakPrompt()));
+  document.querySelectorAll(".js-repeat").forEach((b) => onTap(b, () => {
+    if (current === "learn") speakLearn();
+    else if (current === "find") speakPrompt();
+    else if (current === "count" || current === "sum") speakPlay();
+  }));
+  const setStars = () => document.querySelectorAll(".js-stars").forEach((e) => e.textContent = stars);
 
   /* ---------- Conocer ---------- */
   let ln = 1;
@@ -346,28 +417,196 @@ svg { display: block; }
     if (roundDone || b.classList.contains("tried")) return;
     if (v === target) {
       roundDone = true; b.classList.add("ok"); chime();
-      stars++; $("starCount").textContent = stars;
-      setTimeout(showParty, 450);
+      stars++; setStars();
+      setTimeout(() => showParty("find", "Es el <b>" + target + "</b>", ["¡Muy bien!", "Es el " + W[target] + "."]), 450);
     } else {
       b.classList.add("tried"); b.setAttribute("aria-disabled", "true");
       say(["Ese es el " + W[v] + ".", "Busca el " + W[target] + "."]);
     }
   }
-  function showParty() {
-    if (current !== "find") return;
+  let partyNext = null;
+  function showParty(mode, html, parts, levelUp) {
+    if (current !== mode) return;
     const p = $("party");
-    $("partyTitle").textContent = stars % 5 === 0 ? "¡" + stars + " estrellas!" : "¡Muy bien!";
-    $("partyText").innerHTML = "Es el <b>" + target + "</b>";
+    const milestone = stars % 5 === 0;
+    $("partyTitle").textContent = levelUp ? "¡Nuevo nivel!" : milestone ? "¡" + stars + " estrellas!" : "¡Muy bien!";
+    $("partyText").innerHTML = html;
     const burst = $("burst"); burst.innerHTML = "";
     for (let k = 0; k < 10; k++) burst.insertAdjacentHTML("beforeend", '<svg style="--a:' + (k * 36) + 'deg"><use href="#i-star"/></svg>');
     p.hidden = false;
-    const parts = ["¡Muy bien!", "Es el " + W[target] + "."];
-    if (stars % 5 === 0) parts[2] ="¡Ya ganaste " + (stars <= 10 ? W[stars] : stars) + " estrellas!";
+    parts = parts.slice();
+    if (milestone) parts.push("¡Ya ganaste " + (stars <= 10 ? W[stars] : stars) + " estrellas!");
+    if (levelUp) parts.push("¡Subiste de nivel!");
+    partyNext = mode === "find" ? newRound : mode === "count" ? newCount : newSum;
     say(parts, null, () => { partyTimer = setTimeout(closeParty, 1400); });
   }
-  function closeParty() { clearTimeout(partyTimer); if ($("party").hidden) return; $("party").hidden = true; newRound(); }
+  function closeParty() { clearTimeout(partyTimer); if ($("party").hidden) return; $("party").hidden = true; partyNext && partyNext(); }
   onTap($("party"), closeParty);
   onTap($("btnFind"), () => { show("find"); newRound(); });
+
+  /* ---------- Objetos grandes (Contar y Sumar) ---------- */
+  const OBJS = [
+    { id: "o-star", one: "estrella", many: "estrellas" },
+    { id: "o-ball", one: "pelota", many: "pelotas" },
+    { id: "o-apple", one: "manzana", many: "manzanas" },
+    { id: "o-flower", one: "flor", many: "flores" },
+  ];
+  let objIdx = -1;
+  const nextObj = () => { objIdx = (objIdx + 1 + Math.floor(Math.random() * (OBJS.length - 1))) % OBJS.length; return OBJS[objIdx]; };
+  const qty = (n, o) => (n === 1 ? "una " + o.one : W[n] + " " + o.many);
+  const NS = "http://www.w3.org/2000/svg";
+
+  // Dibuja n objetos dentro de su caja, eligiendo filas y columnas para que sean lo más grandes posible.
+  function drawObjs(box, n, o, color, startTag) {
+    const r = box.getBoundingClientRect();
+    const w = Math.max(r.width, 50), h = Math.max(r.height, 50);
+    let best = 1, bestSize = 0;
+    for (let c = 1; c <= Math.min(n, 5); c++) {
+      const rows = Math.ceil(n / c), size = Math.min(w / c, h / rows);
+      if (size > bestSize + 0.5 || (Math.abs(size - bestSize) <= 0.5 && c === 5)) { best = c; bestSize = size; }
+    }
+    const cols = best, rows = Math.ceil(n / cols);
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + cols * 110 + " " + rows * 110);
+    svg.setAttribute("aria-hidden", "true");
+    for (let k = 0; k < n; k++) {
+      const row = Math.floor(k / cols), inRow = Math.min(cols, n - row * cols);
+      const x = (cols - inRow) * 55 + (k - row * cols) * 110 + 5, y = row * 110 + 5;
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "obj"); g.setAttribute("transform", "translate(" + x + " " + y + ")");
+      g.innerHTML = '<circle class="ring" cx="50" cy="50" r="54" fill="none" stroke="var(--line)" stroke-width="7"/>' +
+        '<g class="o-in" style="color:' + color + '"><use href="#' + o.id + '" width="100" height="100"/>' +
+        '<g class="tag"><circle cx="50" cy="50" r="25" fill="var(--bg)"/><text x="50" y="62" text-anchor="middle" fill="' + color + '">' + (startTag + k) + '</text></g></g>';
+      svg.appendChild(g);
+    }
+    box.innerHTML = ""; box.appendChild(svg);
+  }
+
+  // Cuenta en voz alta iluminando cada objeto; al final dice el total.
+  function countAloud(stage, intro, total, outro) {
+    const objs = [...stage.querySelectorAll(".obj")];
+    objs.forEach((g) => g.classList.remove("lit", "done"));
+    stage.classList.add("counting");
+    const parts = intro.slice(), off = parts.length;
+    for (let k = 1; k <= objs.length; k++) parts.push(W[k]);
+    parts.push(...outro);
+    say(parts, (idx) => {
+      objs.forEach((g) => g.classList.remove("lit"));
+      const g = objs[idx - off];
+      if (g) g.classList.add("lit", "done");
+    }, () => { objs.forEach((g) => g.classList.remove("lit")); });
+  }
+  function clearCount(stage) { stage.classList.remove("counting"); stage.querySelectorAll(".obj").forEach((g) => g.classList.remove("lit", "done")); }
+
+  function makeChoices(box, answer, max, level, onPick) {
+    const n = Math.min(Number(S.options), max);
+    const opts = new Set([answer]);
+    // En nivel 1 los distractores son cualquier número; después, cercanos a la respuesta.
+    let tries = 0;
+    while (opts.size < n) {
+      let v = level === 1 || tries > 30 ? rand(max) : answer + (Math.random() < 0.5 ? -1 : 1) * rand(2);
+      tries++;
+      if (v >= 1 && v <= max) opts.add(v);
+    }
+    const list = [...opts].sort((a, b) => a - b);
+    box.className = "choices low n" + n; box.innerHTML = "";
+    list.forEach((v) => {
+      const b = document.createElement("button");
+      b.className = "choice"; b.textContent = v; b.setAttribute("aria-label", W[v]);
+      onTap(b, () => onPick(v, b));
+      box.appendChild(b);
+    });
+  }
+
+  // Estado común de una ronda de Contar o Sumar
+  const P = { answer: 0, a: 0, b: 0, obj: OBJS[0], missed: false, done: false, hits: { count: 0, sum: 0 }, lastKey: "" };
+  function levelCheck(mode) {
+    const key = mode === "count" ? "lvCount" : "lvSum";
+    if (P.missed) return false;
+    P.hits[mode]++;
+    if (Number(S.auto) && P.hits[mode] >= 5 && S[key] < 3) { S[key]++; P.hits[mode] = 0; save(); return true; }
+    return false;
+  }
+
+  /* ---------- Contar ---------- */
+  function countMax() { return Math.min(S.max, [0, 3, 5, 10][S.lvCount]); }
+  function newCount() {
+    P.done = false; P.missed = false;
+    const max = countMax();
+    let n;
+    do { n = rand(max); } while (String(n) === P.lastKey && max > 1);
+    P.lastKey = String(n); P.answer = n; P.obj = nextObj();
+    $("countPrompt").innerHTML = "¿Cuántas <b>" + P.obj.many + "</b> hay?";
+    pop($("countPrompt"));
+    clearCount($("countStage"));
+    drawObjs($("countObjs"), n, P.obj, "var(--num)", 1);
+    makeChoices($("countChoices"), n, max, S.lvCount, answerCount);
+    speakPlay();
+  }
+  function answerCount(v, b) {
+    if (P.done || b.classList.contains("tried")) return;
+    if (v === P.answer) {
+      P.done = true; b.classList.add("ok"); chime();
+      stars++; setStars();
+      const up = levelCheck("count");
+      setTimeout(() => showParty("count", "Hay <b>" + v + "</b>", ["¡Muy bien!", "Hay " + qty(v, P.obj) + "."], up), 450);
+    } else {
+      P.missed = true;
+      b.classList.add("tried"); b.setAttribute("aria-disabled", "true");
+      countAloud($("countStage"), ["Ese es el " + W[v] + ".", "Contemos juntos."], P.answer, ["Son " + W[P.answer] + "."]);
+    }
+  }
+
+  /* ---------- Sumar ---------- */
+  function newSum() {
+    P.done = false; P.missed = false;
+    const lim = Math.min(S.max, S.lvSum === 3 ? 10 : 5);
+    let a, b;
+    do {
+      if (S.lvSum === 1) { a = rand(lim - 1); b = 1; }
+      else { a = rand(Math.min(5, lim - 1)); b = rand(Math.min(5, lim - a)); }
+    } while (a + "+" + b === P.lastKey && lim > 2);
+    P.lastKey = a + "+" + b; P.a = a; P.b = b; P.answer = a + b; P.obj = nextObj();
+    $("sumPrompt").innerHTML = "¿Cuántas <b>" + P.obj.many + "</b> son en total?";
+    pop($("sumPrompt"));
+    clearCount($("sumStage"));
+    $("sumANum").textContent = a; $("sumBNum").textContent = b;
+    drawObjs($("sumA"), a, P.obj, "var(--num)", 1);
+    drawObjs($("sumB"), b, P.obj, "var(--num2)", a + 1);
+    makeChoices($("sumChoices"), a + b, lim, S.lvSum, answerSum);
+    speakPlay();
+  }
+  function answerSum(v, btn) {
+    if (P.done || btn.classList.contains("tried")) return;
+    const { a, b } = P;
+    if (v === P.answer) {
+      P.done = true; btn.classList.add("ok"); chime();
+      stars++; setStars();
+      const up = levelCheck("sum");
+      setTimeout(() => showParty("sum", "<b>" + a + " + " + b + " = " + v + "</b>", ["¡Muy bien!", W[a] + " más " + W[b] + " es " + W[v] + "."], up), 450);
+    } else {
+      P.missed = true;
+      btn.classList.add("tried"); btn.setAttribute("aria-disabled", "true");
+      countAloud($("sumStage"), ["Ese es el " + W[v] + ".", "Contemos todas juntas."], P.answer, ["Son " + W[P.answer] + "."]);
+    }
+  }
+
+  function speakPlay() {
+    if (current === "count") { clearCount($("countStage")); say(["¿Cuántas " + P.obj.many + " hay?"]); }
+    if (current === "sum") { clearCount($("sumStage")); say([qty(P.a, P.obj) + ",", "y " + qty(P.b, P.obj) + " más.", "¿Cuántas son en total?"]); }
+  }
+  onTap($("countStage"), () => { if (!P.done) countAloud($("countStage"), [], P.answer, ["Son " + W[P.answer] + "."]); });
+  onTap($("sumStage"), () => { if (!P.done) countAloud($("sumStage"), [], P.answer, ["Son " + W[P.answer] + "."]); });
+  onTap($("btnCount"), () => { show("count"); newCount(); });
+  onTap($("btnSum"), () => { show("sum"); newSum(); });
+  let rsT = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(rsT);
+    rsT = setTimeout(() => {
+      if (current === "count" && P.answer) drawObjs($("countObjs"), P.answer, P.obj, "var(--num)", 1);
+      if (current === "sum" && P.answer) { drawObjs($("sumA"), P.a, P.obj, "var(--num)", 1); drawObjs($("sumB"), P.b, P.obj, "var(--num2)", P.a + 1); }
+    }, 150);
+  });
 
   /* ---------- Ajustes ---------- */
   function syncSeg() {
@@ -379,6 +618,8 @@ svg { display: block; }
   document.querySelectorAll(".seg button").forEach((b) => onTap(b, () => {
     const key = b.parentElement.dataset.key;
     S[key] = key === "colors" ? b.dataset.val : Number(b.dataset.val);
+    if (key === "lvCount") P.hits.count = 0;
+    if (key === "lvSum") P.hits.sum = 0;
     save(); syncSeg(); applyColors();
   }));
   onTap($("btnSettings"), () => { show("settings"); syncSeg(); });
