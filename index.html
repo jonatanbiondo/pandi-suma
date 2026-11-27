@@ -20,12 +20,13 @@
   --ok: #2EE59D;
   --soft: #B9C0EA;
   --num2: #5CE1FF;      /* segundo grupo en Sumar: celeste */
+  --tray: #1F2A66;      /* bandeja de respuestas, distinta de las cartas */
   --font: "Atkinson Hyperlegible", "Verdana", "Segoe UI", system-ui, sans-serif;
   color-scheme: dark;
 }
 html[data-colors="light"] {
   --bg: #FFFFFF; --surface: #FFF2B3; --line: #000000; --fg: #000000;
-  --num: #000000; --empty: #E3E5EF; --ok: #08803F; --soft: #3A3F5C; --num2: #0039B3;
+  --num: #000000; --empty: #E3E5EF; --ok: #08803F; --soft: #3A3F5C; --num2: #0039B3; --tray: #E6E9F5;
   color-scheme: light;
 }
 [hidden] { display: none !important; }
@@ -109,7 +110,7 @@ svg { display: block; }
 .plus { flex: 0 0 auto; align-self: center; font-size: min(16vh, 12vw); font-weight: 700; line-height: 1; }
 .g2 .gnum { color: var(--num2); }
 .g1 .gnum { color: var(--num); }
-@media (orientation: portrait) { #sumStage { flex-direction: column; } #sumStage .plus { font-size: min(9vh, 16vw); } }
+@media (orientation: portrait) { #sumStage { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: 1fr auto; } #sumStage .plus { font-size: min(9vh, 12vw); } #sumStage .result { grid-column: 1 / -1; } }
 .obj .o-in { transform-box: fill-box; transform-origin: center; transition: transform .2s, opacity .2s; }
 .obj .ring { opacity: 0; transition: opacity .15s; }
 .stage.counting .obj .o-in { opacity: .3; }
@@ -118,10 +119,21 @@ svg { display: block; }
 .obj.lit .ring { opacity: 1; }
 .obj .tag { font-family: var(--font); font-weight: 700; font-size: 34px; opacity: 0; }
 .obj.done .tag { opacity: 1; }
-.choices.low { flex: 0 0 30vh; }
-.low .choice { font-size: min(22vh, 20vw); }
-.low.n3 .choice { font-size: min(22vh, 15vw); }
-@media (orientation: portrait) and (max-aspect-ratio: 4/5) { .choices.low.n3 { grid-auto-flow: column; grid-auto-rows: auto; } .low.n3 .choice { font-size: min(18vh, 15vw); } }
+/* Respuestas: botones redondos dentro de una bandeja, para que no parezcan parte de las cartas */
+.choices.low { flex: 0 0 30vh; display: flex; justify-content: center; align-items: center; gap: 5vmin; background: var(--tray); border-radius: 999px; padding: 1.5vh 4vmin; }
+.low .choice { flex: 0 0 auto; width: min(26vh, 27vw); height: min(26vh, 27vw); border-radius: 50%; font-size: min(17vh, 17vw); padding: 0; }
+.low.n3 .choice { width: min(26vh, 25vw); height: min(26vh, 25vw); font-size: min(17vh, 15vw); }
+.result { flex: 0 0 auto; display: flex; align-items: center; gap: 2vmin; }
+.eq { font-size: min(16vh, 12vw); font-weight: 700; line-height: 1; }
+.qbox { width: min(30vh, 18vw); align-self: stretch; display: grid; place-items: center; border: 6px dashed var(--soft); border-radius: 28px; font-size: min(18vh, 13vw); font-weight: 700; color: var(--soft); }
+.qbox.ok { border-style: solid; border-color: var(--ok); color: var(--ok); }
+@media (orientation: portrait) {
+  .result { justify-content: center; }
+  .eq { font-size: min(9vh, 16vw); }
+  .qbox { width: auto; min-width: 30vw; height: 12vh; padding: 0 4vw; font-size: min(10vh, 16vw); }
+  .choices.low { flex-basis: 24vh; }
+  .low .choice, .low.n3 .choice { width: min(21vh, 26vw); height: min(21vh, 26vw); font-size: min(14vh, 15vw); }
+}
 .choice.hint-ok { box-shadow: 0 0 0 10px var(--num); }
 
 /* Celebración */
@@ -240,6 +252,7 @@ svg { display: block; }
       <div class="group-box g1"><div class="objs" id="sumA"></div><div class="gnum" id="sumANum"></div></div>
       <div class="plus" aria-hidden="true">+</div>
       <div class="group-box g2"><div class="objs" id="sumB"></div><div class="gnum" id="sumBNum"></div></div>
+      <div class="result"><div class="eq" aria-hidden="true">=</div><div class="qbox" id="sumQ">?</div></div>
     </div>
     <div class="choices low" id="sumChoices"></div>
   </section>
@@ -571,6 +584,7 @@ svg { display: block; }
     pop($("sumPrompt"));
     clearCount($("sumStage"));
     $("sumANum").textContent = a; $("sumBNum").textContent = b;
+    $("sumQ").textContent = "?"; $("sumQ").classList.remove("ok");
     drawObjs($("sumA"), a, P.obj, "var(--num)", 1);
     drawObjs($("sumB"), b, P.obj, "var(--num2)", a + 1);
     makeChoices($("sumChoices"), a + b, lim, S.lvSum, answerSum);
@@ -581,9 +595,10 @@ svg { display: block; }
     const { a, b } = P;
     if (v === P.answer) {
       P.done = true; btn.classList.add("ok"); chime();
+      $("sumQ").textContent = v; $("sumQ").classList.add("ok"); pop($("sumQ"));
       stars++; setStars();
       const up = levelCheck("sum");
-      setTimeout(() => showParty("sum", "<b>" + a + " + " + b + " = " + v + "</b>", ["¡Muy bien!", W[a] + " más " + W[b] + " es " + W[v] + "."], up), 450);
+      setTimeout(() => showParty("sum", "<b>" + a + " + " + b + " = " + v + "</b>", ["¡Muy bien!", W[a] + " más " + W[b] + " es " + W[v] + "."], up), 1100);
     } else {
       P.missed = true;
       btn.classList.add("tried"); btn.setAttribute("aria-disabled", "true");
