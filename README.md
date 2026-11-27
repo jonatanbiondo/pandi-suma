@@ -20,8 +20,16 @@ Gatitos originales dibujados en SVG dentro del juego, con contorno grueso que ca
 - **Mandarina** (naranja rayada): Encontrar.
 - **Nube** (gris claro con moño azul): Contar.
 - **Fresita** (rosa con flor en la oreja): Sumar.
+- **Parchecito** (gatito de tela hecho con retazos: cara amarilla con costuras, cuerpo a rayas naranja, verde, rosa y lila): está en la pantalla de inicio y llega a festejar cuando hay 3 aciertos seguidos.
 
-El guía de cada modo está arriba, junto a las estrellas: salta contento al acertar y ladea la cabeza al equivocarse. Tocarlo hace que se presente con la voz. En los festejos aparece grande; cada 5 estrellas o al subir de nivel bailan los cuatro juntos.
+El guía de cada modo está arriba, junto a las estrellas: salta contento al acertar y ladea la cabeza al equivocarse. Tocarlo hace que se presente con la voz. En los festejos aparece grande; cada 5 estrellas o al subir de nivel bailan los cinco juntos.
+
+## Rachas
+En Encontrar, Contar y Sumar, tres círculos junto a las estrellas se llenan con cada acierto seguido (un error los vacía).
+- 1 acierto: chispas alrededor de la respuesta y una ola de estrellas.
+- 2 seguidas: más chispas, un anillo, dos olas de estrellas, un poco de confeti y la voz dice "¡Dos seguidas!".
+- 3 o más: chispas grandes, tres olas de estrellas, lluvia de confeti, los gatitos bailan y llega Parchecito. "¡Tres seguidas! ¡Qué racha!".
+- Los efectos son grandes, con contorno y movimiento lento, sin destellos ni parpadeos. Con "reducir movimiento" activado en el sistema no se muestran.
 
 ## Accesibilidad
 - Alto contraste (amarillo sobre azul, o negro sobre blanco), tipografía Atkinson Hyperlegible.
