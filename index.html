@@ -61,7 +61,26 @@ svg { display: block; }
 /* Inicio */
 #home { align-items: center; justify-content: center; text-align: center; position: relative; }
 #home h1 { margin: 0; font-size: clamp(36px, 7vmin, 72px); line-height: 1.05; text-wrap: balance; }
-.panda { width: clamp(110px, 24vmin, 220px); height: auto; }
+.hero { width: clamp(120px, 26vmin, 240px); cursor: pointer; }
+.hero .cat { width: 100%; height: auto; }
+/* Personajes: gatitos originales con contorno grueso que se adapta al esquema de colores */
+.cat { display: block; overflow: visible; }
+.cat .tail { transform-origin: 150px 196px; animation: wag 2.4s ease-in-out infinite alternate; }
+.cat .eyes-open { transform-box: fill-box; transform-origin: center; animation: blink 5s infinite; }
+.cat .eyes-happy, .cat .mouth-happy { display: none; }
+.cat.happy .eyes-happy, .cat.happy .mouth-happy { display: inline; }
+.cat.happy .eyes-open, .cat.happy .mouth-calm { display: none; }
+.cat.happy { animation: hop .35s ease-in-out 4 alternate; }
+.cat.think { animation: tilt 1.2s ease-in-out; }
+@keyframes wag { from { transform: rotate(-8deg); } to { transform: rotate(10deg); } }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-12deg); } 65% { transform: rotate(10deg); } }
+.mini { display: inline-block; width: 2.2em; vertical-align: middle; margin-right: .2em; }
+.mini .cat { width: 100%; height: auto; }
+.menu .lbl { display: flex; align-items: center; justify-content: center; }
+.mid { display: flex; align-items: center; gap: 16px; }
+.guide { width: 96px; height: 96px; cursor: pointer; flex: 0 0 auto; }
+.guide .cat { width: 100%; height: 100%; }
 .menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 1300px; flex: 0 1 50vh; min-height: 180px; }
 @media (max-aspect-ratio: 5/4) { .menu { grid-template-columns: repeat(2, 1fr); flex-basis: 56vh; } }
 .menu button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: clamp(30px, 5.5vmin, 56px); font-weight: 700; padding: 16px; min-width: 0; }
@@ -138,7 +157,12 @@ svg { display: block; }
 
 /* Celebración */
 .party { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin; text-align: center; cursor: pointer; padding: 16px; }
-.party .panda { width: min(40vmin, 320px); animation: hop .7s ease-in-out infinite alternate; }
+.party-cats { display: flex; justify-content: center; align-items: flex-end; gap: 2vmin; }
+.party-cats .cat { width: min(40vmin, 320px); height: auto; animation: hop .7s ease-in-out infinite alternate; }
+.party-cats.all .cat { width: min(22vmin, 24vw, 200px); }
+.party-cats .cat:nth-child(2) { animation-delay: .17s; }
+.party-cats .cat:nth-child(3) { animation-delay: .35s; }
+.party-cats .cat:nth-child(4) { animation-delay: .52s; }
 .party h2 { margin: 0; font-size: clamp(56px, 13vmin, 140px); color: var(--ok); }
 .party p { margin: 0; font-size: clamp(32px, 7vmin, 80px); font-weight: 700; }
 .party p b { color: var(--num); font-size: 1.4em; }
@@ -178,37 +202,26 @@ svg { display: block; }
     <symbol id="o-ball" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="currentColor"/><path d="M12 40Q50 66 88 40M30 13Q48 50 30 88" fill="none" stroke="var(--bg)" stroke-width="6"/></symbol>
     <symbol id="o-apple" viewBox="0 0 100 100"><path fill="currentColor" d="M50 32C30 14 6 28 12 56s28 40 38 32c10 8 32-4 38-32S70 14 50 32z"/><path d="M50 32Q50 16 58 6" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path fill="currentColor" d="M55 22q14-16 30-8q-14 16-30 8z"/></symbol>
     <symbol id="o-flower" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="24" r="20"/><circle cx="75" cy="42" r="20"/><circle cx="66" cy="72" r="20"/><circle cx="34" cy="72" r="20"/><circle cx="25" cy="42" r="20"/></g><circle cx="50" cy="50" r="14" fill="var(--bg)"/></symbol>
-    <symbol id="i-panda" viewBox="0 0 200 200">
-      <circle cx="48" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
-      <circle cx="152" cy="52" r="30" fill="#111" stroke="#fff" stroke-width="6"/>
-      <circle cx="100" cy="110" r="78" fill="#fff" stroke="#111" stroke-width="5"/>
-      <ellipse cx="68" cy="100" rx="19" ry="25" transform="rotate(-25 68 100)" fill="#111"/>
-      <ellipse cx="132" cy="100" rx="19" ry="25" transform="rotate(25 132 100)" fill="#111"/>
-      <circle cx="71" cy="98" r="8" fill="#fff"/><circle cx="129" cy="98" r="8" fill="#fff"/>
-      <circle cx="73" cy="99" r="4" fill="#111"/><circle cx="127" cy="99" r="4" fill="#111"/>
-      <ellipse cx="100" cy="132" rx="13" ry="9" fill="#111"/>
-      <path d="M84 148q16 16 32 0" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="52" cy="138" r="10" fill="#FF8FB1"/><circle cx="148" cy="138" r="10" fill="#FF8FB1"/>
-    </symbol>
   </defs>
 </svg>
 
 <div id="app">
   <section id="home" class="screen">
     <button id="btnSettings" class="icon-btn" aria-label="Ajustes para adultos"><svg><use href="#i-gear"/></svg></button>
-    <svg class="panda" viewBox="0 0 200 200" aria-hidden="true"><use href="#i-panda"/></svg>
+    <div class="hero" id="hero" data-cat="pandi" data-mood="wave" role="button" tabindex="0" aria-label="Pandi, el gatito"></div>
     <h1>Pandi y los números</h1>
     <div class="menu">
-      <button id="btnLearn"><span class="big">1 2 3</span><span>Conocer</span></button>
-      <button id="btnFind"><span class="big">?</span><span>Encontrar</span></button>
-      <button id="btnCount"><span class="big"><svg viewBox="0 0 300 100" aria-hidden="true"><use href="#o-star" x="0" width="100" height="100"/><use href="#o-star" x="100" width="100" height="100"/><use href="#o-star" x="200" width="100" height="100"/></svg></span><span>Contar</span></button>
-      <button id="btnSum"><span class="big">1+1</span><span>Sumar</span></button>
+      <button id="btnLearn"><span class="big">1 2 3</span><span class="lbl"><span class="mini" data-cat="pandi"></span>Conocer</span></button>
+      <button id="btnFind"><span class="big">?</span><span class="lbl"><span class="mini" data-cat="mandarina"></span>Encontrar</span></button>
+      <button id="btnCount"><span class="big"><svg viewBox="0 0 300 100" aria-hidden="true"><use href="#o-star" x="0" width="100" height="100"/><use href="#o-star" x="100" width="100" height="100"/><use href="#o-star" x="200" width="100" height="100"/></svg></span><span class="lbl"><span class="mini" data-cat="nube"></span>Contar</span></button>
+      <button id="btnSum"><span class="big">1+1</span><span class="lbl"><span class="mini" data-cat="fresita"></span>Sumar</span></button>
     </div>
   </section>
 
   <section id="learn" class="screen" hidden>
     <div class="bar">
       <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
+      <div class="guide" data-cat="pandi" role="button" tabindex="0" aria-label="Pandi"></div>
       <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
     </div>
     <div id="learnStage" role="button" tabindex="0" aria-label="Siguiente número">
@@ -221,7 +234,7 @@ svg { display: block; }
   <section id="find" class="screen" hidden>
     <div class="bar">
       <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
-      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
+      <div class="mid"><div class="guide" data-cat="mandarina" role="button" tabindex="0" aria-label="Mandarina"></div><div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div></div>
       <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
     </div>
     <p class="prompt" id="findPrompt" aria-live="polite"></p>
@@ -231,7 +244,7 @@ svg { display: block; }
   <section id="count" class="screen" hidden>
     <div class="bar">
       <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
-      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
+      <div class="mid"><div class="guide" data-cat="nube" role="button" tabindex="0" aria-label="Nube"></div><div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div></div>
       <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
     </div>
     <p class="prompt" id="countPrompt" aria-live="polite"></p>
@@ -244,7 +257,7 @@ svg { display: block; }
   <section id="sum" class="screen" hidden>
     <div class="bar">
       <button class="icon-btn js-home" aria-label="Volver al inicio"><svg><use href="#i-home"/></svg></button>
-      <div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div>
+      <div class="mid"><div class="guide" data-cat="fresita" role="button" tabindex="0" aria-label="Fresita"></div><div class="stars" aria-label="Estrellas ganadas"><svg><use href="#i-star"/></svg><span class="js-stars">0</span></div></div>
       <button class="icon-btn js-repeat" aria-label="Escuchar otra vez"><svg><use href="#i-sound"/></svg></button>
     </div>
     <p class="prompt" id="sumPrompt" aria-live="polite"></p>
@@ -276,7 +289,7 @@ svg { display: block; }
 
   <div id="party" class="party" hidden>
     <div class="burst" id="burst"></div>
-    <svg class="panda" viewBox="0 0 200 200" aria-hidden="true"><use href="#i-panda"/></svg>
+    <div class="party-cats" id="partyCats"></div>
     <h2 id="partyTitle">¡Muy bien!</h2>
     <p id="partyText"></p>
   </div>
@@ -292,6 +305,58 @@ svg { display: block; }
   const save = () => { try { localStorage.setItem("pandi-numeros", JSON.stringify(S)); } catch (e) {} };
   const applyColors = () => document.documentElement.setAttribute("data-colors", S.colors);
   applyColors();
+
+  /* ---------- Personajes: gatitos originales dibujados en SVG ---------- */
+  const INK = "#151515";
+  const CATS = {
+    pandi:     { name: "Pandi",     fur: "#FFFFFF", dark: INK,       inner: "#FF9EBB", hi: "Hola, soy Pandi. ¡Vamos a jugar con los números!" },
+    mandarina: { name: "Mandarina", fur: "#FF9A3C", dark: "#B5530A", inner: "#FFD2B0", hi: "Soy Mandarina. ¡Me encanta buscar números!" },
+    nube:      { name: "Nube",      fur: "#D3DCEA", dark: "#7D8AA3", inner: "#FFB7CF", hi: "Soy Nube. ¡Contemos juntos!" },
+    fresita:   { name: "Fresita",   fur: "#FF9CC2", dark: "#C2457A", inner: "#FFE1EC", hi: "Soy Fresita. ¡Vamos a sumar!" },
+  };
+  const MODE_CAT = { learn: "pandi", find: "mandarina", count: "nube", sum: "fresita" };
+  function catSVG(kind) {
+    const c = CATS[kind], P = kind === "pandi";
+    const ear = P ? INK : c.fur, paw = P ? INK : c.fur, tail = P ? INK : c.fur;
+    const L = 'stroke="var(--line)" stroke-width="6" stroke-linejoin="round"';
+    const eyeInk = P ? "#FFFFFF" : INK;
+    let extra = "";
+    if (kind === "pandi") extra = '<path d="M62 142 L138 142 L100 176 Z" fill="#FFD400" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="152" r="5" fill="' + INK + '"/>';
+    if (kind === "mandarina") extra = '<g stroke="' + c.dark + '" stroke-width="7" stroke-linecap="round"><path d="M100 38v18M84 42l3 15M116 42l-3 15"/></g>';
+    if (kind === "nube") extra = '<g fill="#2F6BFF" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"><path d="M100 150 L76 138 L76 162 Z"/><path d="M100 150 L124 138 L124 162 Z"/><circle cx="100" cy="150" r="7"/></g>';
+    if (kind === "fresita") extra = '<g stroke="' + INK + '" stroke-width="3"><g fill="#FFFFFF"><circle cx="150" cy="22" r="9"/><circle cx="162" cy="31" r="9"/><circle cx="157" cy="45" r="9"/><circle cx="143" cy="45" r="9"/><circle cx="138" cy="31" r="9"/></g><circle cx="150" cy="34" r="7" fill="#FFD400"/></g>';
+    return '<svg class="cat cat-' + kind + '" viewBox="-6 -6 212 236" aria-hidden="true">' +
+      '<g class="tail"><path d="M146 196 C190 192 196 146 174 124" fill="none" stroke="var(--line)" stroke-width="30" stroke-linecap="round"/>' +
+      '<path d="M146 196 C190 192 196 146 174 124" fill="none" stroke="' + tail + '" stroke-width="18" stroke-linecap="round"/></g>' +
+      '<ellipse cx="100" cy="178" rx="52" ry="42" fill="' + c.fur + '" ' + L + '/>' +
+      '<ellipse cx="76" cy="214" rx="18" ry="11" fill="' + paw + '" ' + L + '/><ellipse cx="124" cy="214" rx="18" ry="11" fill="' + paw + '" ' + L + '/>' +
+      '<path d="M36 70 L44 12 L90 42 Z" fill="' + ear + '" ' + L + '/><path d="M164 70 L156 12 L110 42 Z" fill="' + ear + '" ' + L + '/>' +
+      '<path d="M50 58 L53 30 L76 45 Z" fill="' + c.inner + '"/><path d="M150 58 L147 30 L124 45 Z" fill="' + c.inner + '"/>' +
+      '<ellipse cx="100" cy="94" rx="72" ry="58" fill="' + c.fur + '" ' + L + '/>' +
+      (P ? '<ellipse cx="70" cy="94" rx="21" ry="25" transform="rotate(-18 70 94)" fill="' + INK + '"/><ellipse cx="130" cy="94" rx="21" ry="25" transform="rotate(18 130 94)" fill="' + INK + '"/>' : '') +
+      extra +
+      '<g class="eyes-open">' + (P
+        ? '<circle cx="72" cy="92" r="12" fill="#FFFFFF"/><circle cx="128" cy="92" r="12" fill="#FFFFFF"/><circle cx="74" cy="93" r="7" fill="' + INK + '"/><circle cx="126" cy="93" r="7" fill="' + INK + '"/>'
+        : '<circle cx="72" cy="92" r="12" fill="' + INK + '"/><circle cx="128" cy="92" r="12" fill="' + INK + '"/>') +
+      '<circle cx="76" cy="88" r="4" fill="#FFFFFF"/><circle cx="132" cy="88" r="4" fill="#FFFFFF"/></g>' +
+      '<g class="eyes-happy" fill="none" stroke="' + eyeInk + '" stroke-width="7" stroke-linecap="round"><path d="M60 96 Q72 80 84 96"/><path d="M116 96 Q128 80 140 96"/></g>' +
+      '<path d="M92 110 h16 l-8 9 z" fill="#FF6F9C" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path class="mouth-calm" d="M86 124 q7 8 14 0 q7 8 14 0" fill="none" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' +
+      '<path class="mouth-happy" d="M86 122 Q100 146 114 122 Z" fill="#8A1538" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>' +
+      '<g stroke="' + INK + '" stroke-width="4" stroke-linecap="round"><path d="M58 112 L34 106M58 120 L34 124M142 112 L166 106M142 120 L166 124"/></g>' +
+      (kind !== "fresita" ? '<circle cx="50" cy="120" r="8" fill="#FF8FB1" opacity=".8"/><circle cx="150" cy="120" r="8" fill="#FF8FB1" opacity=".8"/>' : '') +
+      '</svg>';
+  }
+  document.querySelectorAll("[data-cat]").forEach((el) => { el.innerHTML = catSVG(el.dataset.cat); });
+  const moodT = new WeakMap();
+  function mood(svg, m, ms) {
+    if (!svg) return;
+    svg.classList.remove("happy", "think"); void svg.getBoundingClientRect();
+    svg.classList.add(m);
+    clearTimeout(moodT.get(svg));
+    moodT.set(svg, setTimeout(() => svg.classList.remove(m), ms || 1400));
+  }
+  const guideOf = (mode) => document.querySelector("#" + mode + " .guide .cat");
 
   /* ---------- Toques: grandes, tolerantes y sin dobles toques ---------- */
   let lockUntil = 0;
@@ -380,6 +445,9 @@ svg { display: block; }
   }));
   const setStars = () => document.querySelectorAll(".js-stars").forEach((e) => e.textContent = stars);
 
+  onTap($("hero"), () => { mood($("hero").firstChild, "happy", 2400); say([CATS.pandi.hi]); });
+  document.querySelectorAll(".guide").forEach((g) => onTap(g, () => { mood(g.firstChild, "happy", 1800); say([CATS[g.dataset.cat].hi]); }));
+
   /* ---------- Conocer ---------- */
   let ln = 1;
   function pop(el) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
@@ -429,11 +497,11 @@ svg { display: block; }
   function answer(v, b) {
     if (roundDone || b.classList.contains("tried")) return;
     if (v === target) {
-      roundDone = true; b.classList.add("ok"); chime();
+      roundDone = true; b.classList.add("ok"); chime(); mood(guideOf("find"), "happy");
       stars++; setStars();
       setTimeout(() => showParty("find", "Es el <b>" + target + "</b>", ["¡Muy bien!", "Es el " + W[target] + "."]), 450);
     } else {
-      b.classList.add("tried"); b.setAttribute("aria-disabled", "true");
+      b.classList.add("tried"); b.setAttribute("aria-disabled", "true"); mood(guideOf("find"), "think");
       say(["Ese es el " + W[v] + ".", "Busca el " + W[target] + "."]);
     }
   }
@@ -442,6 +510,11 @@ svg { display: block; }
     if (current !== mode) return;
     const p = $("party");
     const milestone = stars % 5 === 0;
+    const pc = $("partyCats");
+    const who = levelUp || milestone ? ["pandi", "mandarina", "nube", "fresita"] : [MODE_CAT[mode]];
+    pc.className = "party-cats" + (who.length > 1 ? " all" : "");
+    pc.innerHTML = who.map(catSVG).join("");
+    pc.querySelectorAll(".cat").forEach((c) => c.classList.add("happy"));
     $("partyTitle").textContent = levelUp ? "¡Nuevo nivel!" : milestone ? "¡" + stars + " estrellas!" : "¡Muy bien!";
     $("partyText").innerHTML = html;
     const burst = $("burst"); burst.innerHTML = "";
@@ -559,13 +632,13 @@ svg { display: block; }
   function answerCount(v, b) {
     if (P.done || b.classList.contains("tried")) return;
     if (v === P.answer) {
-      P.done = true; b.classList.add("ok"); chime();
+      P.done = true; b.classList.add("ok"); chime(); mood(guideOf("count"), "happy");
       stars++; setStars();
       const up = levelCheck("count");
       setTimeout(() => showParty("count", "Hay <b>" + v + "</b>", ["¡Muy bien!", "Hay " + qty(v, P.obj) + "."], up), 450);
     } else {
       P.missed = true;
-      b.classList.add("tried"); b.setAttribute("aria-disabled", "true");
+      b.classList.add("tried"); b.setAttribute("aria-disabled", "true"); mood(guideOf("count"), "think");
       countAloud($("countStage"), ["Ese es el " + W[v] + ".", "Contemos juntos."], P.answer, ["Son " + W[P.answer] + "."]);
     }
   }
@@ -594,14 +667,14 @@ svg { display: block; }
     if (P.done || btn.classList.contains("tried")) return;
     const { a, b } = P;
     if (v === P.answer) {
-      P.done = true; btn.classList.add("ok"); chime();
+      P.done = true; btn.classList.add("ok"); chime(); mood(guideOf("sum"), "happy");
       $("sumQ").textContent = v; $("sumQ").classList.add("ok"); pop($("sumQ"));
       stars++; setStars();
       const up = levelCheck("sum");
       setTimeout(() => showParty("sum", "<b>" + a + " + " + b + " = " + v + "</b>", ["¡Muy bien!", W[a] + " más " + W[b] + " es " + W[v] + "."], up), 1100);
     } else {
       P.missed = true;
-      btn.classList.add("tried"); btn.setAttribute("aria-disabled", "true");
+      btn.classList.add("tried"); btn.setAttribute("aria-disabled", "true"); mood(guideOf("sum"), "think");
       countAloud($("sumStage"), ["Ese es el " + W[v] + ".", "Contemos todas juntas."], P.answer, ["Son " + W[P.answer] + "."]);
     }
   }

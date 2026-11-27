@@ -14,6 +14,15 @@ Abrí `index.html` en el navegador. No necesita instalación.
   - Nivel 1: sumar uno (hasta 5) · Nivel 2: sumas hasta 5 · Nivel 3: sumas hasta 10 (cada grupo hasta 5).
 - El juego sube de nivel solo cada 5 aciertos al primer intento (se puede apagar y elegir el nivel en Ajustes).
 
+## Personajes
+Gatitos originales dibujados en SVG dentro del juego, con contorno grueso que cambia con el esquema de colores:
+- **Pandi** (blanco y negro como un oso panda, pañuelo amarillo): bienvenida y Conocer.
+- **Mandarina** (naranja rayada): Encontrar.
+- **Nube** (gris claro con moño azul): Contar.
+- **Fresita** (rosa con flor en la oreja): Sumar.
+
+El guía de cada modo está arriba, junto a las estrellas: salta contento al acertar y ladea la cabeza al equivocarse. Tocarlo hace que se presente con la voz. En los festejos aparece grande; cada 5 estrellas o al subir de nivel bailan los cuatro juntos.
+
 ## Accesibilidad
 - Alto contraste (amarillo sobre azul, o negro sobre blanco), tipografía Atkinson Hyperlegible.
 - Toques tolerantes: se activa al apoyar el dedo y se ignoran los toques repetidos durante 0,65 s.
