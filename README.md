@@ -27,8 +27,9 @@ El guía de cada modo está arriba, junto a las estrellas: salta contento al ace
 ## Rachas
 En Encontrar, Contar y Sumar, tres círculos junto a las estrellas se llenan con cada acierto seguido (un error los vacía).
 - 1 acierto: chispas alrededor de la respuesta y una ola de estrellas.
-- 2 seguidas: más chispas, un anillo, dos olas de estrellas, un poco de confeti y la voz dice "¡Dos seguidas!".
-- 3 o más: chispas grandes, tres olas de estrellas, lluvia de confeti, los gatitos bailan y llega Parchecito. "¡Tres seguidas! ¡Qué racha!".
+- 2 seguidas: más chispas, un anillo, dos olas de estrellas y un poco de confeti.
+- 3 o más: chispas grandes, tres olas de estrellas, lluvia de confeti, los gatitos bailan y llega Parchecito ("¡Vino Parchecito a festejar!").
+- La voz no dice cuántas seguidas van, para no mezclarlo con los números del juego; solo dice "¡Muy bien!" como siempre.
 - Los efectos son grandes, con contorno y movimiento lento, sin destellos ni parpadeos. Con "reducir movimiento" activado en el sistema no se muestran.
 
 ## Accesibilidad

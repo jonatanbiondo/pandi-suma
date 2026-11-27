@@ -547,8 +547,7 @@ svg { display: block; }
       fx.appendChild(el);
     }
   }
-  const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
-  const nWord = (n) => (n <= 10 ? W[n] : String(n));
+
   document.querySelectorAll(".guide").forEach((g) => onTap(g, () => { mood(g.firstChild, "happy", 1800); say([CATS[g.dataset.cat].hi]); }));
 
   /* ---------- Conocer ---------- */
@@ -641,8 +640,6 @@ svg { display: block; }
     if (st >= 3 || levelUp || milestone) confetti(st >= 3 ? 48 : 30);
     else if (st === 2) confetti(16);
     parts = parts.slice();
-    if (st >= 3) parts[0] = "¡" + cap(nWord(st)) + " seguidas! ¡Qué racha!";
-    else if (st === 2) parts[0] = "¡Dos seguidas!";
     if (st === 3) parts.push("¡Vino Parchecito a festejar!");
     if (milestone) parts.push("¡Ya ganaste " + (stars <= 10 ? W[stars] : stars) + " estrellas!");
     if (levelUp) parts.push("¡Subiste de nivel!");
